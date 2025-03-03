@@ -1,0 +1,4 @@
+uid = input("Ingrese la targeta: ") # Captura el UID de la tarjeta
+uid_num = int(uid)
+uid_hex = hex(uid_num)[2:].upper()
+print (uid_hex)
