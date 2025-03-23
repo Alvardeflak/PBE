@@ -21,8 +21,10 @@ class UIDReaderApp(Gtk.Window):
         box.pack_start(self.message_box, True, True, 0)
 
         # Campo oculto para leer el UID
-        self.entry = Gtk.Entry(visibility=False)
+        self.entry = Gtk.Entry()
+        self.entry.set_visibility(False)
         self.entry.connect("activate", self.on_uid_entered)
+        self.entry.connect("realize", self.on_entry_ready)
         box.pack_start(self.entry, False, False, 0)
 
         # Botón Clear
@@ -35,6 +37,7 @@ class UIDReaderApp(Gtk.Window):
         quit_btn.connect("clicked", Gtk.main_quit)
         box.pack_start(quit_btn, False, False, 0)
 
+        # Estilos
         self.apply_css()
         self.set_style("blue")
 
@@ -50,6 +53,10 @@ class UIDReaderApp(Gtk.Window):
         self.label.set_text(self.default_text)
         self.set_style("blue")
         self.entry.grab_focus()
+
+    def on_entry_ready(self, widget):
+        widget.hide()
+        widget.grab_focus()
 
     def set_style(self, color):
         ctx = self.message_box.get_style_context()
@@ -82,5 +89,4 @@ if __name__ == "__main__":
     app = UIDReaderApp()
     app.connect("destroy", Gtk.main_quit)
     app.show_all()
-    app.entry.grab_focus()
     Gtk.main()
