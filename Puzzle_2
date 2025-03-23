@@ -14,19 +14,23 @@ class UIDReaderApp(Gtk.Window):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10, margin=20)
         self.add(box)
 
+        # Área de mensaje
         self.message_box = Gtk.EventBox()
         self.label = Gtk.Label(label=self.default_text)
         self.message_box.add(self.label)
         box.pack_start(self.message_box, True, True, 0)
 
+        # Campo oculto para leer el UID
         self.entry = Gtk.Entry(visibility=False)
         self.entry.connect("activate", self.on_uid_entered)
         box.pack_start(self.entry, False, False, 0)
 
+        # Botón Clear
         clear_btn = Gtk.Button(label="Clear")
         clear_btn.connect("clicked", self.reset)
         box.pack_start(clear_btn, False, False, 0)
 
+        # Botón Exit
         quit_btn = Gtk.Button(label="Exit")
         quit_btn.connect("clicked", Gtk.main_quit)
         box.pack_start(quit_btn, False, False, 0)
