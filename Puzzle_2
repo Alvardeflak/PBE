@@ -1,1 +1,82 @@
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk
 
+import signal
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+class UIDReaderApp(Gtk.Window):
+    def __init__(self):
+        super().__init__(title="Puzzle_2.py")
+        self.set_default_size(400, 200)
+
+        self.default_text = "Please, login with your university card"
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10, margin=20)
+        self.add(box)
+
+        self.message_box = Gtk.EventBox()
+        self.label = Gtk.Label(label=self.default_text)
+        self.message_box.add(self.label)
+        box.pack_start(self.message_box, True, True, 0)
+
+        self.entry = Gtk.Entry(visibility=False)
+        self.entry.connect("activate", self.on_uid_entered)
+        box.pack_start(self.entry, False, False, 0)
+
+        clear_btn = Gtk.Button(label="Clear")
+        clear_btn.connect("clicked", self.reset)
+        box.pack_start(clear_btn, False, False, 0)
+
+        quit_btn = Gtk.Button(label="Exit")
+        quit_btn.connect("clicked", Gtk.main_quit)
+        box.pack_start(quit_btn, False, False, 0)
+
+        self.apply_css()
+        self.set_style("blue")
+
+    def on_uid_entered(self, entry):
+        uid = entry.get_text().strip()
+        uid_int = int(uid)
+        uid_hex = hex(uid_int)[2:].upper()
+        self.label.set_text(f"uid: {uid_hex}")
+        self.set_style("red")
+        entry.set_text("")
+
+    def reset(self, _):
+        self.label.set_text(self.default_text)
+        self.set_style("blue")
+        self.entry.grab_focus()
+
+    def set_style(self, color):
+        ctx = self.message_box.get_style_context()
+        ctx.remove_class("blue")
+        ctx.remove_class("red")
+        ctx.add_class(color)
+
+    def apply_css(self):
+        css = b"""
+        .blue {
+            background-color: #0000cc;
+            color: white;
+            font-size: 20px;
+            padding: 20px;
+        }
+        .red {
+            background-color: #cc0000;
+            color: white;
+            font-size: 20px;
+            padding: 20px;
+        }
+        """
+        style = Gtk.CssProvider()
+        style.load_from_data(css)
+        Gtk.StyleContext.add_provider_for_screen(
+            Gdk.Screen.get_default(), style, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
+
+if __name__ == "__main__":
+    app = UIDReaderApp()
+    app.connect("destroy", Gtk.main_quit)
+    app.show_all()
+    app.entry.grab_focus()
+    Gtk.main()
